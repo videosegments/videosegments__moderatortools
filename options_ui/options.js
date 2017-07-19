@@ -10,13 +10,10 @@ else {
 }
 
 function saveOptions() {
-	var editor = document.getElementById('editor').checked;
 	var authid = document.getElementById('authid').value;
 	
 	storage.set({
-		editor: editor, 
 		authid: authid
-		
 	}, function() {
 		// cross browser support
 		var translator;
@@ -44,7 +41,6 @@ function restoreOptions() {
 		authid: ''
 		
 	}, function(result) {
-		document.getElementById('editor').checked = result.editor;
 		document.getElementById('authid').value = result.authid;
 	});
 }

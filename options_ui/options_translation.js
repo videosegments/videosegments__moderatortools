@@ -17,9 +17,6 @@ function translateTextById(id) {
 	}
 }
 
-translateTextById('editorLabel');
 translateTextById('authidLabel');
-
 translateTextById('optionsUpdate');
-
 translateTextById('buttonSave');

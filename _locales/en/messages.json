@@ -11,33 +11,6 @@
 	
 	
 	
-	"settingsGlobal": {
-		"message": "Global settings.",
-		"description": "Global settings."
-	},
-	
-	"autoPauseFirstLabel": {
-		"message": "Wait segments loading for ",
-		"description": "Pause video while segments is loading."
-	},
-	
-	"autoPauseSecondLabel": {
-		"message": " seconds max.",
-		"description": "Pause video while segments is loading."
-	},
-	
-	"progressBarLabel": {
-		"message": "Add segmentsbar to progress bar.",
-		"description": "Add segmentsbar to progress bar."
-	},
-	
-	
-	
-	"settingsSegmentsToPlay": {
-		"message": "Segments to play:",
-		"description": "Which segments user will watch."
-	},
-	
 	"segmentContentLabel": {
 		"message": "Content.",
 		"description": "Content."
@@ -79,7 +52,11 @@
 	},
 	
 	
-
+	
+	"authidLabel": {
+		"message": "Auth Id",
+		"description": "Input for authentification"
+	},
 	
 	"buttonSave": {
 		"message": "Save changes",
@@ -94,16 +71,5 @@
 	"optionsSaved": {
 		"message": "Succesfully saved!",
 		"description": "Message when user click on button save."
-	},
-	
-	
-	"editorLabel": {
-		"message": "Enable editor (tool for moderators)",
-		"description": "Show editor at youtube domain"
-	},
-	
-	"authidLabel": {
-		"message": "Auth Id",
-		"description": "Input for authentification"
 	}
 }

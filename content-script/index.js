@@ -17,8 +17,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-document.addEventListener('vs_gotsegments', function() {
-	var data = event.detail;
+document.addEventListener('vs_gotsegments', function(event) {
+	var data = JSON.parse(event.detail);
 	
 	// load user settings 
 	// cross-browser support
@@ -44,11 +44,9 @@ document.addEventListener('vs_gotsegments', function() {
 	// request settings 
 	crossBrowser.get({
 		/* editor */
-		editor: false,
 		authid: '',
 	}, function(result) {
-		/* save editor preferances */
-		data.settings.editor = result.editor;
+		/* add authid to preferences */
 		data.settings.authid = result.authid;
 		
 		// delay creation
@@ -61,7 +59,6 @@ document.addEventListener('vs_gotsegments', function() {
 
 /**
  * Class for handling segments moderation 
- * 
  */
 var editorWrapper = {
 	mediaPlayer: null,
@@ -206,7 +203,7 @@ var editorWrapper = {
 	
 	/*
 	 * Creates line with segment information
-	*/
+	 */
 	createSegmentEntry: function(startTime, endTime, type) {
 		// container for row 
 		var editorEntry = document.createElement('div');
@@ -316,7 +313,7 @@ var editorWrapper = {
 	},
 	
 	/*
-	 * Updates preview of segments (
+	 * Updates preview of segments
 	 */ 
 	updateSegmentsPreview: function() {
 		// console.log('editorWrapper::updateSegmentsPreview()');
@@ -432,7 +429,6 @@ var editorWrapper = {
 		// format query 
 		var post = 'domain=youtube&video_id='+this.id+'&timestamps='+timestamps+'&types='+types+'&authid='+this.settings.authid;
 		xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
-		// console.log(post);
 		xhr.send(post);
 	},
 	
