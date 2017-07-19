@@ -18,6 +18,8 @@
  */
 
 document.addEventListener('vs_gotsegments', function(event) {
+	// https://bugzilla.mozilla.org/show_bug.cgi?id=999586
+	// same issue "Permission denied to access property", bypass by JSON
 	var data = JSON.parse(event.detail);
 	
 	// load user settings 
@@ -61,12 +63,20 @@ document.addEventListener('vs_gotsegments', function(event) {
  * Class for handling segments moderation 
  */
 var editorWrapper = {
+	
 	mediaPlayer: null,
+	
 	editorDiv: null,
+	
 	segmentsCount: null,
+	
 	settings: null,
+	
 	domain: null,
+	
 	id: null,
+	
+	segmentsNames: null,
 	
 	/*
 	 * Initializes class variables, create UI 
@@ -110,11 +120,27 @@ var editorWrapper = {
 		segmentsButtons.id = 'vs-segments-buttons';
 		segmentsButtons.style = 'display: flex; justify-content: space-between;';
 		var segmentsTypes = ['c', 'i', 'a', 'cs', 'ia', 'cr', 'o', 's'];
-		var segmentsTexts = ['content', 'intro', 'advertisement', 'cutscene', 'interactive', 'credits', 'offtop', 'scam'];
+		this.segmentsNames = ['segmentContentLabel', 'segmentIntroLabel', 'segmentAdvertisementLabel', 'segmentCutsceneLabel', 'segmentInteractiveLabel', 'segmentCreditsLabel', 'segmentOfftopLabel', 'segmentScamLabel'];
 		var segmentsColors = [	this.settings.colorContent, this.settings.colorIntro, this.settings.colorAdvertisement, this.settings.colorCutscene, 
 								this.settings.colorInteractive, this.settings.colorCredits, this.settings.colorOfftop, this.settings.colorScam];
 		
-		for ( var i = 0; i < segmentsTypes.length; ++i ) {
+		// cross browser support
+		var translator;
+		// firefox
+		if ( typeof browser !== 'undefined' ) {
+			translator = browser;
+		}
+		// chrome
+		else {
+			translator = chrome;
+		}
+		
+		// translate button captions
+		for ( let i = 0; i < this.segmentsNames.length; ++i ) {
+			this.segmentsNames[i] = translator.i18n.getMessage(this.segmentsNames[i]);
+		}
+		
+		for ( let i = 0; i < segmentsTypes.length; ++i ) {
 			// define is color dark or light  
 			var c = this.settings.segmentsColors[segmentsTypes[i]].replace(/[^\d,]/g, '').split(',');
 			var light = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
@@ -127,7 +153,7 @@ var editorWrapper = {
 			}
 			
 			// add buttons and define thier behavior 
-			segmentsButtons.appendChild(this.createButton(segmentsTypes[i], segmentsTexts[i], function() {
+			segmentsButtons.appendChild(this.createButton(segmentsTypes[i], this.segmentsNames[i], function() {
 					var entries = self.editorDiv.getElementsByClassName('vs-editor-entry');
 					// if there is no entries
 					if ( entries.length == 0 ) {
@@ -193,7 +219,7 @@ var editorWrapper = {
 		var controlButtons = document.createElement('div');
 		controlButtons.id = 'vs-control-buttons';
 		controlButtons.style = 'text-align: right;';
-		controlButtons.appendChild(this.createButton('', 'Send to database', function() {self.sendSegmentsData()}, 'width: 20%; padding: 0; height: 40px;'));
+		controlButtons.appendChild(this.createButton('', translator.i18n.getMessage('sendToDatabaseLabel'), function() {self.sendSegmentsData()}, 'width: 20%; padding: 0; height: 40px;'));
 		this.editorDiv.appendChild(controlButtons);
 		
 		// add editor div to watch header
@@ -240,11 +266,10 @@ var editorWrapper = {
 		
 		// add segment types 
 		var segmentsTypes = ['c', 'i', 'a', 'cs', 'ia', 'cr', 'o', 's'];
-		var segmentsTexts = ['content', 'intro', 'advertisement', 'cutscene', 'interactive', 'credits', 'offtop', 'scam'];
 		for ( var i = 0; i < segmentsTypes.length; ++i ) {
 			var optionSegmentType = document.createElement('option');
 			optionSegmentType.value = segmentsTypes[i];
-			optionSegmentType.text = segmentsTexts[i];
+			optionSegmentType.text = this.segmentsNames[i];
 			selectSegmentType.appendChild(optionSegmentType);
 		}
 		selectSegmentType.value = type;

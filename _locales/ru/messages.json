@@ -5,76 +5,76 @@
 	},
 
 	"extensionDescription": {
-		"message": "Tools for video segmentation",
+		"message": "Инструменты для сегментирования видео",
 		"description": "Description of the extension."
 	},
 	
 	
 	
 	"segmentContentLabel": {
-		"message": "Content",
+		"message": "Контент",
 		"description": "Content."
 	},
 	
 	"segmentIntroLabel": {
-		"message": "Intro",
+		"message": "Вступление",
 		"description": "Intro."
 	},
 	
 	"segmentAdvertisementLabel": {
-		"message": "Advertisement",
+		"message": "Реклама",
 		"description": "Advertisement."
 	},
 	
 	"segmentCutsceneLabel": {
-		"message": "Cutscene",
+		"message": "Катсцена",
 		"description": "Cutscene."
 	},
 	
 	"segmentInteractiveLabel": {
-		"message": "Interactive",
+		"message": "Интерактив",
 		"description": "Interactive."
 	},
 	
 	"segmentCreditsLabel": {
-		"message": "Credits",
+		"message": "Титры",
 		"description": "Credits."
 	},
 	
 	"segmentScamLabel": {
-		"message": "Scam",
+		"message": "Обман",
 		"description": "Scam"
 	},
 	
 	"segmentOfftopLabel": {
-		"message": "Offtop",
+		"message": "Оффтоп",
 		"description": "Offtop."
 	},
 	
 	"sendToDatabaseLabel": {
-		"message": "Send to database",
+		"message": "Отправить в базу данных",
 		"description": "Send to database."
 	},
 	
 	
 	
 	"authidLabel": {
-		"message": "Auth Id: ",
+		"message": "Идентификатор: ",
 		"description": "Input for authentification"
 	},
 	
 	"buttonSave": {
-		"message": "Save changes",
+		"message": "Сохранить изменения",
 		"description": "Save changes."
 	},
 	
 	"optionsUpdate": {
-		"message": "Changes will applied after page refresh.",
+		"message": "Изменения вступят в силу после перезагрузки страниц.",
 		"description": "When settings will be updated."
 	},
 	
 	"optionsSaved": {
-		"message": "Succesfully saved!",
+		"message": "Успешно сохранено!",
 		"description": "Message when user click on button save."
 	}
 }

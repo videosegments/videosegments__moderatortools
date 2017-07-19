@@ -19,4 +19,3 @@ function translateTextById(id) {
 
 translateTextById('authidLabel');
 translateTextById('optionsUpdate');
-translateTextById('buttonSave');
