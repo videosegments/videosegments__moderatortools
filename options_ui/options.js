@@ -18,7 +18,7 @@ function restoreOptions() {
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.getElementById('authid').addEventListener('change', function() { updatePreferenceValue('authid'); });
+document.getElementById('authid').addEventListener('change', function() { updatePreferenceValue(this.id); });
 
 function updatePreferenceValue(preferanceName) 
 {

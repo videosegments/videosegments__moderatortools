@@ -24,27 +24,23 @@ document.addEventListener('vs_gotsegments', function(event) {
 	
 	// load user settings 
 	// cross-browser support
-	var crossBrowser;
+	var crossStorage;
 	// gecko
 	if ( (typeof browser != 'undefined') && browser.storage ) {
-		crossBrowser = browser.storage.local;
+		crossStorage = browser.storage.local;
 	}
 	// chromium
 	else if ( (typeof chrome != 'undefined') && chrome.storage ) {
-		crossBrowser = chrome.storage.sync;
+		crossStorage = chrome.storage.sync;
 	}
 	else {
-		// sometimes extension simply don't want to load ... 
-		// and this happens only on firefox developer edition, idk why 
-		// on chrome/firefox everything fine, for dev version 
-		// browser and chrome are empty object { }
-		// console.log('failed: ', crossBrowser);
-		// return;
-		// somehow it's working now
+		crossStorage = null;
+		console.log('failed: ', crossStorage);
+		return;
 	}
 	
 	// request settings 
-	crossBrowser.get({
+	crossStorage.get({
 		/* editor */
 		authid: '',
 	}, function(result) {
