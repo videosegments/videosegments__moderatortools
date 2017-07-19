@@ -59,19 +59,17 @@ document.addEventListener('vs_gotsegments', function(event) {
  * Class for handling segments moderation 
  */
 var editorWrapper = {
-	
+	/* media player */
 	mediaPlayer: null,
-	
+	/* DOM-element of editor */
 	editorDiv: null,
-	
-	segmentsCount: null,
-	
+	/* user preferences */
 	settings: null,
-	
+	/* current video domain */
 	domain: null,
-	
+	/* current video id */
 	id: null,
-	
+	/* translation of segments names */
 	segmentsNames: null,
 	
 	/*
