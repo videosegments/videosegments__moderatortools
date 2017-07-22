@@ -17,7 +17,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-document.addEventListener('vs_gotsegments', function(event) {
+var editor;
+
+document.addEventListener('vsgotsegments', function(event) {
 	// https://bugzilla.mozilla.org/show_bug.cgi?id=999586
 	// same issue "Permission denied to access property", bypass by JSON
 	var data = JSON.parse(event.detail);
@@ -42,14 +44,16 @@ document.addEventListener('vs_gotsegments', function(event) {
 	// request settings 
 	crossStorage.get({
 		/* editor */
-		authid: '',
+		login: '',
+		password: ''
 	}, function(result) {
 		/* add authid to preferences */
-		data.settings.authid = result.authid;
+		data.settings.login = result.login;
+		data.settings.password = result.password;
 		
 		// delay creation
 		setTimeout(function() {
-			var editor = Object.create(editorWrapper);
+			editor = Object.create(editorWrapper);
 			editor.init(data.segmentsData, data.settings, data.domain, data.id);
 		}, 1000);
 	});
@@ -71,6 +75,8 @@ var editorWrapper = {
 	id: null,
 	/* translation of segments names */
 	segmentsNames: null,
+	/* modal window for captcha */
+	modal: null,
 	
 	/*
 	 * Initializes class variables, create UI 
@@ -136,10 +142,16 @@ var editorWrapper = {
 		
 		for ( let i = 0; i < segmentsTypes.length; ++i ) {
 			// define is color dark or light  
-			var c = this.settings.segmentsColors[segmentsTypes[i]].replace(/[^\d,]/g, '').split(',');
-			var light = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+			// https://stackoverflow.com/a/12043228
+			var c = this.settings.segmentsColors[segmentsTypes[i]].substring(1);
+			var rgb = parseInt(c, 16);   // convert rrggbb to decimal
+			var r = (rgb >> 16) & 0xff;  // extract red
+			var g = (rgb >>  8) & 0xff;  // extract green
+			var b = (rgb >>  0) & 0xff;  // extract blue
+			
 			var textColor;
-			if (light < 50) {
+			var light = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+			if (light < 60) {
 				textColor = 'white';
 			}
 			else {
@@ -219,6 +231,17 @@ var editorWrapper = {
 		// add editor div to watch header
 		watchHeader.insertAdjacentElement('beforeBegin', this.editorDiv);
 		this.editorDiv.insertAdjacentElement('afterEnd', document.createElement('br'));
+		
+		// modal for captcha 
+		this.modal = document.createElement('div');
+		var modalContent = document.createElement('div');
+		
+		this.modal.id = 'vs-captcha-modal';
+		this.modal.style = 'display: none; position: fixed; z-index: 2000000000; padding-top: 100px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.8);';
+		modalContent.style = 'background-color: #fefefe; margin: auto; border: 1px solid #888; width: 350px';
+		
+		this.modal.appendChild(modalContent);
+		this.editorDiv.appendChild(this.modal);
 	},
 	
 	/*
@@ -267,6 +290,9 @@ var editorWrapper = {
 			selectSegmentType.appendChild(optionSegmentType);
 		}
 		selectSegmentType.value = type;
+		selectSegmentType.onchange = function() {
+			self.updateSegmentsPreview();
+		}
 		
 		// format and display 
 		var self = this;
@@ -336,22 +362,25 @@ var editorWrapper = {
 	 */ 
 	updateSegmentsPreview: function() {
 		// console.log('editorWrapper::updateSegmentsPreview()');
-		// var entries = this.editorDiv.getElementsByClassName('vs-editor-entry');
+		var entries = this.editorDiv.getElementsByClassName('vs-editor-entry');
 		
-		// should be replaced with better code! 
-		// this.mediaPlayerWrapper.removeSegmentBar();
-		// this.mediaPlayerWrapper.segmentsData = [];
-		// this.mediaPlayerWrapper.segmentsData.timestamps = [];
-		// this.mediaPlayerWrapper.segmentsData.types = [];
+		var segmentsData = {};
+		segmentsData.timestamps = [];
+		segmentsData.types = [];
 		
 		// update timestamps and types 
-		// this.mediaPlayerWrapper.segmentsData.timestamps[0] = 0.0;
-		// for ( let i = 0; i < entries.length; ++i ) {
-			// this.mediaPlayerWrapper.segmentsData.timestamps[i+1] = parseFloat(entries[i].getElementsByClassName('vs-editor-end-time')[0].value);
-			// this.mediaPlayerWrapper.segmentsData.types[i] = entries[i].getElementsByClassName('vs-editor-segment-type')[0].value;
-		// }
-		// should be replaced with better code! 
-		// this.mediaPlayerWrapper.insertSegmentBar();
+		segmentsData.timestamps[0] = 0.0;
+		for ( let i = 0; i < entries.length; ++i ) {
+			segmentsData.timestamps[i+1] = parseFloat(entries[i].getElementsByClassName('vs-editor-end-time')[0].value);
+			segmentsData.types[i] = entries[i].getElementsByClassName('vs-editor-segment-type')[0].value;
+		}
+		
+		var event = new CustomEvent('vssegmentsupdated', { 
+			detail: JSON.stringify({
+				segmentsData: segmentsData
+			})
+		});
+		document.dispatchEvent(event);
 	},
 	
 	/*
@@ -394,93 +423,97 @@ var editorWrapper = {
 		// console.log('editorWrapper::sendSegmentsData()');
 		
 		// format as json 
-		// var timestamps = '', types = ',' + document.getElementById('vs_type_'+(this.segmentsCount-1)).value, descriptions, input;
-		// for ( let i = this.segmentsCount-2; i > 0 ; --i) {
-			// var input = document.getElementById('vs_input_end_time_'+i);
-			// timestamps = ',' + input.value + timestamps;
-			// input = document.getElementById('vs_type_'+i);
-			// types = ',' + input.value + types;
-		// }
-		
-		// format as json 
 		var editorEntries = document.getElementsByClassName('vs-editor-entry');
 		var timestamps = '', types = '';
-		var lastSegmentIndex = editorEntries.length-1;
-		for ( let i = 0; i < lastSegmentIndex; ++i ) {
-			timestamps += editorEntries[i].getElementsByClassName('vs-editor-end-time')[0].value + ',';
-			types += editorEntries[i].getElementsByClassName('vs-editor-segment-type')[0].value + ',';
+		
+		if ( editorEntries.length > 0 ) {
+			var lastSegmentIndex = editorEntries.length-1;
+			for ( let i = 0; i < lastSegmentIndex; ++i ) {
+				timestamps += editorEntries[i].getElementsByClassName('vs-editor-end-time')[0].value + ',';
+				types += editorEntries[i].getElementsByClassName('vs-editor-segment-type')[0].value + ',';
+			}
+			
+			// format last segment type manually 
+			timestamps = timestamps.slice(0, -1);
+			types += editorEntries[lastSegmentIndex].getElementsByClassName('vs-editor-segment-type')[0].value;
+		}
+		else {
+			types = 'c';
 		}
 		
-		// format last segment type manually 
-		timestamps = timestamps.slice(0, -1);
-		types += editorEntries[lastSegmentIndex].getElementsByClassName('vs-editor-segment-type')[0].value;
-		
-		// console.log('ts: ', timestamps, 'types: ', types);
-		
-		// remove first symbols (which is ",")
-		// timestamps = timestamps.substr(1);
-		// types = types.substr(1);
-		
-		var self = this;
+		var self = this;		
 		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'https://db.videosegments.org/send_segments.php');
+		xhr.open('POST', 'https://db.videosegments.org/send.php');
 		xhr.onreadystatechange = function() { 
 			if ( xhr.readyState == 4 ) {
 				if ( xhr.status == 200 ) {
 					// console.log('responce: ', xhr.responseText);
-			
-					// server will return '1' if he asking for confirmation (captcha)
-					if ( xhr.responseText[0] == '1' ) {
-						// all server-side checks is here too. someone who tries to send data 
-						// through this without valid authid will be rejected
-						self.requestCaptcha(self.settings.authid, timestamps, types);
+					responce = JSON.parse(xhr.responseText);
+					
+					if ( responce.message === 'captcha' ) {
+						self.modal.style.display = "block";
+						
+						var iframe = document.createElement("iframe");
+						iframe.src = 'https://db.videosegments.org/captcha.php';
+						iframe.width  = 350;
+						iframe.height = 500;
+						iframe.id = 'vs-captcha-iframe';
+						self.modal.childNodes[0].appendChild(iframe);
+						
+						var messageContext = function(event) { 
+							self.checkCaptcha(event, timestamps, types, messageContext, clickContext); 
+						}
+						
+						var clickContext = function(event) { 
+							if ( event.target == self.modal ) {
+								self.modal.style.display = "none";
+								self.modal.childNodes[0].childNodes[0].remove();
+								window.removeEventListener('message', messageContext);
+								window.removeEventListener('click', clickContext);
+							}
+						}
+						
+						window.addEventListener('message', messageContext);
+						window.addEventListener('click', clickContext);
 					}
-					else if ( xhr.responseText[0] == '0' ) {
-						self.destroy();
-						// self.mediaPlayerWrapper.url = null;
-						// self.mediaPlayerWrapper.onDurationChange();
-						window.location.reload();
+					else {
+						setTimeout(function() {window.location.reload();}, 100);
 					}
 				}
 			}
-		}
+		};
 		
-		// format query 
-		var post = 'domain=youtube&video_id='+this.id+'&timestamps='+timestamps+'&types='+types+'&authid='+this.settings.authid;
+		var post = 'domain='+this.domain+'&id='+this.id+'&login='+this.settings.login+'&password='+this.settings.password+'&timestamps='+timestamps+'&types='+types;
 		xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
 		xhr.send(post);
 	},
 	
-	/*
-	 * Open window with post data.
-	 * http://stackoverflow.com/a/14030201
-	 */
-	requestCaptcha: function(authid, timestamps, types) {
-		// console.log('editorWrapper::requestCaptcha()');
-		
-		var form = document.createElement('form');
-		
-		// adds to form data 
-		function append(key, value) {
-			var input = document.createElement('textarea');
-			input.setAttribute('name', key);
-			input.textContent = value;
-			form.appendChild(input);
+	checkCaptcha: function(event, timestamps, types, messageContext, clickContext)
+	{
+		if ( event.origin === 'https://db.videosegments.org' ) {
+			var self = this;
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', 'https://db.videosegments.org/send.php');
+			
+			xhr.onreadystatechange = function() { 
+				if ( xhr.readyState == 4 ) {
+					if ( xhr.status == 200 ) {
+						// console.log('responce: ', xhr.responseText);
+						self.modal.style.display = "none";
+						self.modal.childNodes[0].childNodes[0].remove();
+					}
+				}
+			};
+			
+			var post = 'domain='+this.domain+'&id='+this.id+'&login='+this.settings.login+'&password='+this.settings.password+'&timestamps='+timestamps+'&types='+types+'&captcha='+event.data;
+			// console.log(post);
+			
+			xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
+			xhr.send(post);
+			
+			window.removeEventListener('message', messageContext);
+			window.removeEventListener('click', clickContext);
 		}
-		
-		form.method = 'POST';
-		form.action = 'https://db.videosegments.org/confirm_segments.php';
-		
-		// add post data 
-		append('authid', authid);
-		append('domain', this.domain);
-		append('video_id', this.id);
-		append('types', types);
-		append('timestamps', timestamps);
-		
-		this.editorDiv.appendChild(form);
-		form.submit();
-		form.remove();
 	},
 	
 	/*

@@ -11,19 +11,23 @@ else {
 
 function restoreOptions() {
 	storage.get({
-		authid: ''
+		login: '',
+		password: ''
 	}, function(result) {
-		document.getElementById('authid').value = result.authid;
+		document.getElementById('login').value = result.login;
+		document.getElementById('password').value = result.password;
 	});
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.getElementById('authid').addEventListener('change', function() { updatePreferenceValue(this.id); });
+document.getElementById('login').addEventListener('change', function() { updatePreferenceValue(this.id); });
+document.getElementById('password').addEventListener('change', function() { updatePreferenceValue(this.id); });
 
 function updatePreferenceValue(preferanceName) 
 {
 	var preferenceValue = document.getElementById(preferanceName).value;
 	var preferance = {};
 	preferance[preferanceName] = preferenceValue;
+	console.log(preferance);
 	storage.set(preferance);
 }

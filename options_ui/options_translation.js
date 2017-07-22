@@ -17,5 +17,6 @@ function translateTextById(id) {
 	}
 }
 
-translateTextById('authidLabel');
+translateTextById('loginLabel');
+translateTextById('passwordLabel');
 translateTextById('optionsUpdate');
