@@ -335,9 +335,9 @@ var editorWrapper = {
 				// self.addSegmentEntry(segmentsEditor, 0.0, self.mediaPlayerWrapper.mediaPlayer.duration, 'c');
 			// }
 			
-			self.updateSegmentsPreview();
 			// remove node 
 			this.parentNode.remove(); 
+			self.updateSegmentsPreview();
 		}, 'width: 8%; padding: 0;'));
 		
 		return editorEntry;
