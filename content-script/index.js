@@ -477,7 +477,7 @@ var editorWrapper = {
 						window.addEventListener('click', clickContext);
 					}
 					else {
-						setTimeout(function() {window.location.reload();}, 100);
+						setTimeout(function() {window.location.reload();window.location.reload();window.location.reload();}, 100);
 					}
 				}
 			}
@@ -501,7 +501,7 @@ var editorWrapper = {
 						// console.log('responce: ', xhr.responseText);
 						self.modal.style.display = "none";
 						self.modal.childNodes[0].childNodes[0].remove();
-						setTimeout(function() {window.location.reload();}, 100);
+						setTimeout(function() {window.location.reload();window.location.reload();window.location.reload();}, 100);
 					}
 				}
 			};
