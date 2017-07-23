@@ -1,16 +1,16 @@
 // cross-browser support
-var storage;
+var crossStorage;
 // firefox
 if ( typeof(browser) !== 'undefined' ) {
-	storage = browser.storage.local;
+	crossStorage = browser.storage.local;
 }
 // chrome
 else {
-	storage = chrome.storage.sync;
+	crossStorage = chrome.storage.sync;
 }
 
 function restoreOptions() {
-	storage.get({
+	crossStorage.get({
 		login: '',
 		password: ''
 	}, function(result) {
@@ -28,6 +28,5 @@ function updatePreferenceValue(preferanceName)
 	var preferenceValue = document.getElementById(preferanceName).value;
 	var preferance = {};
 	preferance[preferanceName] = preferenceValue;
-	console.log(preferance);
-	storage.set(preferance);
+	crossStorage.set(preferance);
 }

@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
-	"version": "1.0",
+	"version": "1.1",
 
 	"default_locale": "en",
 	"description": "__MSG_extensionDescription__",
@@ -12,6 +12,14 @@
 	},
 	
 	"author": "Alex Lys",
+	
+	"browser_action": {
+		"default_icon": {
+			"32": "icons/icon-32.png"
+		},
+		"default_title": "VideoSegments ModeratorTools",
+		"default_popup": "browser_action/popup.html"
+	},
 
 	"content_scripts": [
 		{
@@ -29,9 +37,11 @@
 	},
 
 	"permissions": [
-		"https://db.videosegments.org/get_segments.php*",
-		"https://db.videosegments.org/send_segments.php",
-		"https://db.videosegments.org/confirm_segments.php",
-		"storage"
+		"https://db.videosegments.org/get.php*",
+		"https://db.videosegments.org/send.php",
+		"https://db.videosegments.org/request.php*",
+		"https://db.videosegments.org/captcha.php",
+		"storage",
+		"tabs"
 	]
 }

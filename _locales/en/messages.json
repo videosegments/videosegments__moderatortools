@@ -58,12 +58,39 @@
 	
 	
 	
+	"goToLabel": {
+		"message": "Go to",
+		"description": ""
+	},
+	"currentTimeLabel": {
+		"message": "Set current",
+		"description": ""
+	},
+	"removeLabel": {
+		"message": "Remove",
+		"description": ""
+	},
+	
+	
+	
+	
 	"loginLabel": {
 		"message": "Login: ",
 		"description": ""
 	},
 	"passwordLabel": {
 		"message": "Password: ",
+		"description": ""
+	},
+	
+	
+	
+	"goToRequestLabel": {
+		"message": "Go to next request",
+		"description": ""
+	},
+	"noRequestsLabel": {
+		"message": "No requests",
 		"description": ""
 	},
 	

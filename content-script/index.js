@@ -37,7 +37,7 @@ document.addEventListener('vsgotsegments', function(event) {
 	}
 	else {
 		crossStorage = null;
-		console.log('failed: ', crossStorage);
+		// console.log('failed: ', crossStorage);
 		return;
 	}
 	
@@ -77,6 +77,8 @@ var editorWrapper = {
 	segmentsNames: null,
 	/* modal window for captcha */
 	modal: null,
+	/* cross browser */
+	crossBrowser: null,
 	
 	/*
 	 * Initializes class variables, create UI 
@@ -124,20 +126,18 @@ var editorWrapper = {
 		var segmentsColors = [	this.settings.colorContent, this.settings.colorIntro, this.settings.colorAdvertisement, this.settings.colorCutscene, 
 								this.settings.colorInteractive, this.settings.colorCredits, this.settings.colorOfftop, this.settings.colorScam];
 		
-		// cross browser support
-		var translator;
 		// firefox
 		if ( typeof browser !== 'undefined' ) {
-			translator = browser;
+			this.crossBrowser = browser;
 		}
 		// chrome
 		else {
-			translator = chrome;
+			this.crossBrowser = chrome;
 		}
 		
 		// translate button captions
 		for ( let i = 0; i < this.segmentsNames.length; ++i ) {
-			this.segmentsNames[i] = translator.i18n.getMessage(this.segmentsNames[i]);
+			this.segmentsNames[i] = this.crossBrowser.i18n.getMessage(this.segmentsNames[i]);
 		}
 		
 		for ( let i = 0; i < segmentsTypes.length; ++i ) {
@@ -151,7 +151,7 @@ var editorWrapper = {
 			
 			var textColor;
 			var light = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-			if (light < 60) {
+			if (light < 50) {
 				textColor = 'white';
 			}
 			else {
@@ -225,7 +225,7 @@ var editorWrapper = {
 		var controlButtons = document.createElement('div');
 		controlButtons.id = 'vs-control-buttons';
 		controlButtons.style = 'text-align: right;';
-		controlButtons.appendChild(this.createButton('', translator.i18n.getMessage('sendToDatabaseLabel'), function() {self.sendSegmentsData()}, 'width: 20%; padding: 0; height: 40px;'));
+		controlButtons.appendChild(this.createButton('', this.crossBrowser.i18n.getMessage('sendToDatabaseLabel'), function() {self.sendSegmentsData()}, 'width: 20%; padding: 0; height: 40px;'));
 		this.editorDiv.appendChild(controlButtons);
 		
 		// add editor div to watch header
@@ -296,19 +296,19 @@ var editorWrapper = {
 		
 		// format and display 
 		var self = this;
-		editorEntry.appendChild(this.createButton('', 'goto', function() {self.goTo(inputStartTime.value);}, 'width: 8%; padding: 0;'));
+		editorEntry.appendChild(this.createButton('', this.crossBrowser.i18n.getMessage('goToLabel'), function() {self.goTo(inputStartTime.value);}, 'width: 8%; padding: 0;'));
 		editorEntry.appendChild(document.createTextNode('\u00A0')); // &nbsp;
 		editorEntry.appendChild(inputStartTime);
 		editorEntry.appendChild(document.createTextNode('\u00A0:\u00A0'));
 		editorEntry.appendChild(inputEndTime);
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
-		editorEntry.appendChild(this.createButton('', 'current', function() {self.setCurrentTime(inputEndTime);}, 'width: 8%; padding: 0;'));
+		editorEntry.appendChild(this.createButton('', this.crossBrowser.i18n.getMessage('currentTimeLabel'), function() {self.setCurrentTime(inputEndTime);}, 'width: 8%; padding: 0;'));
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
 		editorEntry.appendChild(selectSegmentType);
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
 		
 		// remove button 
-		editorEntry.appendChild(this.createButton('', 'remove', function() { 
+		editorEntry.appendChild(this.createButton('', this.crossBrowser.i18n.getMessage('removeLabel'), function() { 
 			// look for next and previous rows 
 			var prevEntry = this.parentNode.previousSibling;
 			var nextEntry = this.parentNode.nextSibling;
@@ -501,6 +501,7 @@ var editorWrapper = {
 						// console.log('responce: ', xhr.responseText);
 						self.modal.style.display = "none";
 						self.modal.childNodes[0].childNodes[0].remove();
+						setTimeout(function() {window.location.reload();}, 100);
 					}
 				}
 			};
@@ -524,4 +525,3 @@ var editorWrapper = {
 		this.editorDiv.remove();
 	},
 };
-

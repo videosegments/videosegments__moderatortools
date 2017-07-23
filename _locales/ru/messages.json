@@ -58,15 +58,42 @@
 	
 	
 	
-	"authidLabel": {
-		"message": "Идентификатор: ",
-		"description": "Input for authentification"
+	"goToLabel": {
+		"message": "Перейти",
+		"description": ""
+	},
+	"currentTimeLabel": {
+		"message": "Текущее",
+		"description": ""
+	},
+	"removeLabel": {
+		"message": "Удалить",
+		"description": ""
 	},
 	
-	"buttonSave": {
-		"message": "Сохранить изменения",
-		"description": "Save changes."
+	
+	
+	"loginLabel": {
+		"message": "Логин: ",
+		"description": ""
 	},
+	"passwordLabel": {
+		"message": "Пароль: ",
+		"description": ""
+	},
+	
+	
+	
+	"goToRequestLabel": {
+		"message": "Перейти к следующему запросу",
+		"description": ""
+	},
+	"noRequestsLabel": {
+		"message": "Запросов нет",
+		"description": ""
+	},
+	
+	
 	
 	"optionsUpdate": {
 		"message": "Изменения вступят в силу после перезагрузки страниц.",
