@@ -1,5 +1,5 @@
 /**
- * VideoSegments ModeratorTools. Addon for browsers to skip automatically unwanted content in videos
+ * VideoSegments ModeratorTools. Tools for video segmentation
  * Copyright (C) 2017  Alex Lys
  * 
  * This program is free software; you can redistribute it and/or modify
