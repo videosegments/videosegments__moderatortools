@@ -1,16 +1,16 @@
 // cross-browser support
-var crossStorage;
+var crossBrowser;
 // firefox
 if ( typeof(browser) !== 'undefined' ) {
-	crossStorage = browser.storage.local;
+	crossBrowser = browser;
 }
 // chrome
 else {
-	crossStorage = chrome.storage.sync;
+	crossBrowser = chrome;
 }
 
 function restoreOptions() {
-	crossStorage.get({
+	crossBrowser.storage.sync.get({
 		login: '',
 		password: ''
 	}, function(result) {
@@ -28,5 +28,14 @@ function updatePreferenceValue(preferanceName)
 	var preferenceValue = document.getElementById(preferanceName).value;
 	var preferance = {};
 	preferance[preferanceName] = preferenceValue;
-	crossStorage.set(preferance);
+	crossBrowser.storage.sync.set(preferance, function() {notifyWrapper();});
+}
+
+function notifyWrapper()
+{
+	var querying = crossBrowser.tabs.query({}, function(tabs) {
+		for ( let i = 0; i < tabs.length; ++i ) {
+			crossBrowser.tabs.sendMessage(tabs[i].id, {});
+		}
+	});
 }

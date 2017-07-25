@@ -99,15 +99,5 @@
 	"buttonSave": {
 		"message": "Save changes",
 		"description": "Save changes."
-	},
-	
-	"optionsUpdate": {
-		"message": "Changes will applied after page refresh.",
-		"description": "When settings will be updated."
-	},
-	
-	"optionsSaved": {
-		"message": "Succesfully saved!",
-		"description": "Message when user click on button save."
 	}
 }

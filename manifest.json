@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
-	"version": "1.1.1",
+	"version": "1.1.2",
 
 	"default_locale": "en",
 	"description": "__MSG_extensionDescription__",
@@ -14,6 +14,10 @@
 	},
 	
 	"author": "Alex Lys",
+	
+	"background": {
+		"scripts": ["background-scripts/background.js"]
+	},
 	
 	"browser_action": {
 		"default_icon": {
@@ -42,7 +46,6 @@
 		"https://db.videosegments.org/get.php*",
 		"https://db.videosegments.org/send.php",
 		"https://db.videosegments.org/request.php*",
-		"https://db.videosegments.org/captcha.php",
 		"storage",
 		"tabs"
 	]

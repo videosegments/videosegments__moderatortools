@@ -91,17 +91,5 @@
 	"noRequestsLabel": {
 		"message": "Запросов нет",
 		"description": ""
-	},
-	
-	
-	
-	"optionsUpdate": {
-		"message": "Изменения вступят в силу после перезагрузки страниц.",
-		"description": "When settings will be updated."
-	},
-	
-	"optionsSaved": {
-		"message": "Успешно сохранено!",
-		"description": "Message when user click on button save."
 	}
 }

@@ -19,4 +19,3 @@ function translateTextById(id) {
 
 translateTextById('loginLabel');
 translateTextById('passwordLabel');
-translateTextById('optionsUpdate');

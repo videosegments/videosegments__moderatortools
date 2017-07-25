@@ -17,32 +17,27 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-var editor;
+// cross-browser support
+var crossBrowser;
+
+// gecko
+if ( (typeof browser != 'undefined') ) {
+	crossBrowser = browser;
+}
+// chromium
+else if ( (typeof chrome != 'undefined') ) {
+	crossBrowser = chrome;
+}
+
+var wrapper;
 
 document.addEventListener('vsgotsegments', function(event) {
 	// https://bugzilla.mozilla.org/show_bug.cgi?id=999586
 	// same issue "Permission denied to access property", bypass by JSON
 	var data = JSON.parse(event.detail);
 	
-	// load user settings 
-	// cross-browser support
-	var crossStorage;
-	// gecko
-	if ( (typeof browser != 'undefined') && browser.storage ) {
-		crossStorage = browser.storage.local;
-	}
-	// chromium
-	else if ( (typeof chrome != 'undefined') && chrome.storage ) {
-		crossStorage = chrome.storage.sync;
-	}
-	else {
-		crossStorage = null;
-		// console.log('failed: ', crossStorage);
-		return;
-	}
-	
 	// request settings 
-	crossStorage.get({
+	crossBrowser.storage.sync.get({
 		/* editor */
 		login: '',
 		password: ''
@@ -53,8 +48,8 @@ document.addEventListener('vsgotsegments', function(event) {
 		
 		// delay creation
 		setTimeout(function() {
-			editor = Object.create(editorWrapper);
-			editor.init(data.segmentsData, data.settings, data.domain, data.id);
+			wrapper = Object.create(editorWrapper);
+			wrapper.init(data.segmentsData, data.settings, data.domain, data.id);
 		}, 1000);
 	});
 });
@@ -77,8 +72,6 @@ var editorWrapper = {
 	segmentsNames: null,
 	/* modal window for captcha */
 	modal: null,
-	/* cross browser */
-	crossBrowser: null,
 	
 	/*
 	 * Initializes class variables, create UI 
@@ -125,19 +118,10 @@ var editorWrapper = {
 		this.segmentsNames = ['segmentContentLabel', 'segmentIntroLabel', 'segmentAdvertisementLabel', 'segmentCutsceneLabel', 'segmentInteractiveLabel', 'segmentCreditsLabel', 'segmentOfftopLabel', 'segmentScamLabel'];
 		var segmentsColors = [	this.settings.colorContent, this.settings.colorIntro, this.settings.colorAdvertisement, this.settings.colorCutscene, 
 								this.settings.colorInteractive, this.settings.colorCredits, this.settings.colorOfftop, this.settings.colorScam];
-		
-		// firefox
-		if ( typeof browser !== 'undefined' ) {
-			this.crossBrowser = browser;
-		}
-		// chrome
-		else {
-			this.crossBrowser = chrome;
-		}
-		
+				
 		// translate button captions
 		for ( let i = 0; i < this.segmentsNames.length; ++i ) {
-			this.segmentsNames[i] = this.crossBrowser.i18n.getMessage(this.segmentsNames[i]);
+			this.segmentsNames[i] = crossBrowser.i18n.getMessage(this.segmentsNames[i]);
 		}
 		
 		for ( let i = 0; i < segmentsTypes.length; ++i ) {
@@ -225,7 +209,7 @@ var editorWrapper = {
 		var controlButtons = document.createElement('div');
 		controlButtons.id = 'vs-control-buttons';
 		controlButtons.style = 'text-align: right;';
-		controlButtons.appendChild(this.createButton('', this.crossBrowser.i18n.getMessage('sendToDatabaseLabel'), function() {self.sendSegmentsData()}, 'width: 20%; padding: 0; height: 40px;'));
+		controlButtons.appendChild(this.createButton('', crossBrowser.i18n.getMessage('sendToDatabaseLabel'), function() {self.sendSegmentsData()}, 'width: 20%; padding: 0; height: 40px;'));
 		this.editorDiv.appendChild(controlButtons);
 		
 		// add editor div to watch header
@@ -296,19 +280,19 @@ var editorWrapper = {
 		
 		// format and display 
 		var self = this;
-		editorEntry.appendChild(this.createButton('', this.crossBrowser.i18n.getMessage('goToLabel'), function() {self.goTo(inputStartTime.value);}, 'width: 8%; padding: 0;'));
+		editorEntry.appendChild(this.createButton('', crossBrowser.i18n.getMessage('goToLabel'), function() {self.goTo(inputStartTime.value);}, 'width: 8%; padding: 0;'));
 		editorEntry.appendChild(document.createTextNode('\u00A0')); // &nbsp;
 		editorEntry.appendChild(inputStartTime);
 		editorEntry.appendChild(document.createTextNode('\u00A0:\u00A0'));
 		editorEntry.appendChild(inputEndTime);
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
-		editorEntry.appendChild(this.createButton('', this.crossBrowser.i18n.getMessage('currentTimeLabel'), function() {self.setCurrentTime(inputEndTime);}, 'width: 8%; padding: 0;'));
+		editorEntry.appendChild(this.createButton('', crossBrowser.i18n.getMessage('currentTimeLabel'), function() {self.setCurrentTime(inputEndTime);}, 'width: 8%; padding: 0;'));
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
 		editorEntry.appendChild(selectSegmentType);
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
 		
 		// remove button 
-		editorEntry.appendChild(this.createButton('', this.crossBrowser.i18n.getMessage('removeLabel'), function() { 
+		editorEntry.appendChild(this.createButton('', crossBrowser.i18n.getMessage('removeLabel'), function() { 
 			// look for next and previous rows 
 			var prevEntry = this.parentNode.previousSibling;
 			var nextEntry = this.parentNode.nextSibling;
@@ -448,9 +432,9 @@ var editorWrapper = {
 			if ( xhr.readyState == 4 ) {
 				if ( xhr.status == 200 ) {
 					// console.log('responce: ', xhr.responseText);
-					responce = JSON.parse(xhr.responseText);
+					var jsonResponse = JSON.parse(xhr.responseText);
 					
-					if ( responce.message === 'captcha' ) {
+					if ( jsonResponse.message === 'captcha' ) {
 						self.modal.style.display = "block";
 						
 						var iframe = document.createElement("iframe");
@@ -477,7 +461,16 @@ var editorWrapper = {
 						window.addEventListener('click', clickContext);
 					}
 					else {
-						setTimeout(function() {window.location.reload();window.location.reload();window.location.reload();}, 100);
+						if ( jsonResponse.message === 'updated' || jsonResponse.message === 'added' || jsonResponse.message === 'overwritten' ) {
+							setTimeout(function() {
+								window.location.reload();
+								window.location.reload();
+								window.location.reload();
+							}, 100);
+						}
+						else {
+							window.alert('VideoSegments: ' + jsonResponse.message);
+						}
 					}
 				}
 			}
@@ -501,7 +494,17 @@ var editorWrapper = {
 						// console.log('responce: ', xhr.responseText);
 						self.modal.style.display = "none";
 						self.modal.childNodes[0].childNodes[0].remove();
-						setTimeout(function() {window.location.reload();window.location.reload();window.location.reload();}, 100);
+						
+						if ( jsonResponse.message === 'updated' || jsonResponse.message === 'updated' || jsonResponse.message === 'updated' ) {
+							setTimeout(function() {
+								window.location.reload();
+								window.location.reload();
+								window.location.reload();
+							}, 100);
+						}
+						else {
+							window.alert('VideoSegments: ' + jsonResponse.message);
+						}
 					}
 				}
 			};
@@ -525,3 +528,21 @@ var editorWrapper = {
 		this.editorDiv.remove();
 	},
 };
+
+// on settings update
+crossBrowser.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		if ( wrapper ) {
+			// request settings 
+			crossBrowser.storage.sync.get({
+				/* editor */
+				login: '',
+				password: ''
+			}, function(result) {
+				if ( wrapper ) {
+					wrapper.settings = result;
+				}
+			});
+		}
+	}
+);
