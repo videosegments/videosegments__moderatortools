@@ -10,7 +10,7 @@ else {
 }
 
 function restoreOptions() {
-	crossBrowser.storage.sync.get({
+	crossBrowser.storage.local.get({
 		login: '',
 		password: ''
 	}, function(result) {
@@ -28,7 +28,7 @@ function updatePreferenceValue(preferanceName)
 	var preferenceValue = document.getElementById(preferanceName).value;
 	var preferance = {};
 	preferance[preferanceName] = preferenceValue;
-	crossBrowser.storage.sync.set(preferance, function() {notifyWrapper();});
+	crossBrowser.storage.local.set(preferance, function() {notifyWrapper();});
 }
 
 function notifyWrapper()

@@ -37,7 +37,7 @@ document.addEventListener('vsgotsegments', function(event) {
 	var data = JSON.parse(event.detail);
 	
 	// request settings 
-	crossBrowser.storage.sync.get({
+	crossBrowser.storage.local.get({
 		/* editor */
 		login: '',
 		password: ''
@@ -534,7 +534,7 @@ crossBrowser.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if ( wrapper ) {
 			// request settings 
-			crossBrowser.storage.sync.get({
+			crossBrowser.storage.local.get({
 				/* editor */
 				login: '',
 				password: ''
