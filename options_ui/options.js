@@ -1,16 +1,10 @@
 // cross-browser support
-var crossBrowser;
-// firefox
-if ( typeof(browser) !== 'undefined' ) {
-	crossBrowser = browser;
-}
-// chrome
-else {
-	crossBrowser = chrome;
+if ( typeof this.chrome != 'undefined' ) {
+	this.browser = this.chrome;
 }
 
 function restoreOptions() {
-	crossBrowser.storage.local.get({
+	browser.storage.local.get({
 		login: '',
 		password: ''
 	}, function(result) {
@@ -28,14 +22,14 @@ function updatePreferenceValue(preferanceName)
 	var preferenceValue = document.getElementById(preferanceName).value;
 	var preferance = {};
 	preferance[preferanceName] = preferenceValue;
-	crossBrowser.storage.local.set(preferance, function() {notifyWrapper();});
+	browser.storage.local.set(preferance, function() {notifyWrapper();});
 }
 
 function notifyWrapper()
 {
-	var querying = crossBrowser.tabs.query({}, function(tabs) {
+	var querying = browser.tabs.query({}, function(tabs) {
 		for ( let i = 0; i < tabs.length; ++i ) {
-			crossBrowser.tabs.sendMessage(tabs[i].id, {});
+			browser.tabs.sendMessage(tabs[i].id, {});
 		}
 	});
 }

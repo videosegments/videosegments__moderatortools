@@ -1,11 +1,5 @@
-var crossBrowser;
-// gecko
-if ( (typeof browser != 'undefined') ) {
-	crossBrowser = browser;
-}
-// chromium
-else if ( (typeof chrome != 'undefined') ) {
-	crossBrowser = chrome;
+if ( typeof this.chrome != 'undefined' ) {
+	this.browser = this.chrome;
 }
 
 var checkContext = function() { 
@@ -16,7 +10,7 @@ var checkContext = function() {
 			if ( xhr.status == 200 ) {
 				console.log(xhr.responseText);
 				var jsonResponce = JSON.parse(xhr.responseText);
-				crossBrowser.browserAction.setBadgeText({text: jsonResponce.count});
+				browser.browserAction.setBadgeText({text: jsonResponce.count});
 			}
 		}
 	}

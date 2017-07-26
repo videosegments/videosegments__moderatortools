@@ -3,37 +3,17 @@ var password;
 
 // load user settings 
 // cross-browser support
-var crossStorage;
-// gecko
-if ( (typeof browser != 'undefined') && browser.storage ) {
-	crossStorage = browser.storage.local;
-}
-// chromium
-else if ( (typeof chrome != 'undefined') && chrome.storage ) {
-	crossStorage = chrome.storage.sync;
-}
-else {
-	crossStorage = null;
+if ( typeof this.chrome != 'undefined' ) {
+	this.browser = this.chrome;
 }
 
-crossStorage.get({
+browser.storage.local.get({
 	login: '',
 	password: ''
 }, function(result) {
 	login = result.login;
 	password = result.password;
 });
-
-// cross browser support
-var crossBrowser;
-// firefox
-if ( typeof browser !== 'undefined' ) {
-	crossBrowser = browser;
-}
-// chrome
-else {
-	crossBrowser = chrome;
-}
 
 var requestContext = function() {
 	var xhr = new XMLHttpRequest();
@@ -44,13 +24,13 @@ var requestContext = function() {
 				var jsonResponce = JSON.parse(xhr.responseText);
 				console.log(jsonResponce);
 				if ( typeof jsonResponce.id != 'undefined' ) {
-					crossBrowser.tabs.query({currentWindow: true, active: true}, function (tab) {
-						crossBrowser.tabs.update(tab.id, {url: 'https://www.youtube.com/watch?v='+jsonResponce.id});
+					browser.tabs.query({currentWindow: true, active: true}, function (tab) {
+						browser.tabs.update(tab.id, {url: 'https://www.youtube.com/watch?v='+jsonResponce.id});
 					});
 				}
 				else {
 					var elem = document.getElementById('noRequestsLabel');
-					elem.appendChild(document.createTextNode(crossBrowser.i18n.getMessage('noRequestsLabel')));
+					elem.appendChild(document.createTextNode(browser.i18n.getMessage('noRequestsLabel')));
 					elem.style.color = 'red';
 					elem.style.textAlign = 'center';
 					setTimeout(function() { 

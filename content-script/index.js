@@ -18,15 +18,8 @@
  */
 
 // cross-browser support
-var crossBrowser;
-
-// gecko
-if ( (typeof browser != 'undefined') ) {
-	crossBrowser = browser;
-}
-// chromium
-else if ( (typeof chrome != 'undefined') ) {
-	crossBrowser = chrome;
+if ( typeof this.chrome != 'undefined' ) {
+	this.browser = this.chrome;
 }
 
 var wrapper;
@@ -37,7 +30,7 @@ document.addEventListener('vsgotsegments', function(event) {
 	var data = JSON.parse(event.detail);
 	
 	// request settings 
-	crossBrowser.storage.local.get({
+	browser.storage.local.get({
 		/* editor */
 		login: '',
 		password: ''
@@ -121,7 +114,7 @@ var editorWrapper = {
 				
 		// translate button captions
 		for ( let i = 0; i < this.segmentsNames.length; ++i ) {
-			this.segmentsNames[i] = crossBrowser.i18n.getMessage(this.segmentsNames[i]);
+			this.segmentsNames[i] = browser.i18n.getMessage(this.segmentsNames[i]);
 		}
 		
 		for ( let i = 0; i < segmentsTypes.length; ++i ) {
@@ -209,7 +202,7 @@ var editorWrapper = {
 		var controlButtons = document.createElement('div');
 		controlButtons.id = 'vs-control-buttons';
 		controlButtons.style = 'text-align: right;';
-		controlButtons.appendChild(this.createButton('', crossBrowser.i18n.getMessage('sendToDatabaseLabel'), function() {self.sendSegmentsData()}, 'width: 20%; padding: 0; height: 40px;'));
+		controlButtons.appendChild(this.createButton('', browser.i18n.getMessage('sendToDatabaseLabel'), function() {self.sendSegmentsData()}, 'width: 20%; padding: 0; height: 40px;'));
 		this.editorDiv.appendChild(controlButtons);
 		
 		// add editor div to watch header
@@ -280,19 +273,19 @@ var editorWrapper = {
 		
 		// format and display 
 		var self = this;
-		editorEntry.appendChild(this.createButton('', crossBrowser.i18n.getMessage('goToLabel'), function() {self.goTo(inputStartTime.value);}, 'width: 8%; padding: 0;'));
+		editorEntry.appendChild(this.createButton('', browser.i18n.getMessage('goToLabel'), function() {self.goTo(inputStartTime.value);}, 'width: 8%; padding: 0;'));
 		editorEntry.appendChild(document.createTextNode('\u00A0')); // &nbsp;
 		editorEntry.appendChild(inputStartTime);
 		editorEntry.appendChild(document.createTextNode('\u00A0:\u00A0'));
 		editorEntry.appendChild(inputEndTime);
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
-		editorEntry.appendChild(this.createButton('', crossBrowser.i18n.getMessage('currentTimeLabel'), function() {self.setCurrentTime(inputEndTime);}, 'width: 8%; padding: 0;'));
+		editorEntry.appendChild(this.createButton('', browser.i18n.getMessage('currentTimeLabel'), function() {self.setCurrentTime(inputEndTime);}, 'width: 8%; padding: 0;'));
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
 		editorEntry.appendChild(selectSegmentType);
 		editorEntry.appendChild(document.createTextNode('\u00A0'));
 		
 		// remove button 
-		editorEntry.appendChild(this.createButton('', crossBrowser.i18n.getMessage('removeLabel'), function() { 
+		editorEntry.appendChild(this.createButton('', browser.i18n.getMessage('removeLabel'), function() { 
 			// look for next and previous rows 
 			var prevEntry = this.parentNode.previousSibling;
 			var nextEntry = this.parentNode.nextSibling;
@@ -530,11 +523,11 @@ var editorWrapper = {
 };
 
 // on settings update
-crossBrowser.runtime.onMessage.addListener(
+browser.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if ( wrapper ) {
 			// request settings 
-			crossBrowser.storage.local.get({
+			browser.storage.local.get({
 				/* editor */
 				login: '',
 				password: ''
