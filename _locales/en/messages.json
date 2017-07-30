@@ -73,6 +73,13 @@
 	
 	
 	
+	"changesAreNotSaved": {
+		"message": "VideoSegments: changes are not saved",
+		"description": ""
+	},
+	
+	
+	
 	
 	"loginLabel": {
 		"message": "Login: ",

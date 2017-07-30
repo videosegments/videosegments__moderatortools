@@ -65,6 +65,8 @@ var editorWrapper = {
 	segmentsNames: null,
 	/* modal window for captcha */
 	modal: null,
+	/* prevent leaving without confirmation */
+	hasChanges: null,
 	
 	/*
 	 * Initializes class variables, create UI 
@@ -94,7 +96,25 @@ var editorWrapper = {
 		var segmentsEditor = document.createElement('div');
 		segmentsEditor.id = 'vs-editor-entries';
 		
+		// prevent accidential page leaving
 		var self = this;
+		this.hasChanges = false;
+		var a = document.getElementsByTagName('a');
+		for ( let i = 0; i < a.length; ++i ) {
+			a[i].onclick = function(e) {
+				if ( self.hasChanges ) {
+					if ( !confirm(browser.i18n.getMessage('changesAreNotSaved')) ) {
+						e.preventDefault();
+					}
+				}
+			}
+		}
+		window.onbeforeunload = function() {
+			if ( self.hasChanges ) {
+				return browser.i18n.getMessage('changesAreNotSaved');
+			}
+		};
+		
 		// create buttons for each type of segments 
 		// c  - content 
 		// i  - intro 
@@ -358,6 +378,7 @@ var editorWrapper = {
 			})
 		});
 		document.dispatchEvent(event);
+		this.hasChanges = true;
 	},
 	
 	/*
@@ -457,8 +478,6 @@ var editorWrapper = {
 						if ( jsonResponse.message === 'updated' || jsonResponse.message === 'added' || jsonResponse.message === 'overwritten' ) {
 							setTimeout(function() {
 								window.location.reload();
-								window.location.reload();
-								window.location.reload();
 							}, 100);
 						}
 						else {
@@ -490,8 +509,6 @@ var editorWrapper = {
 						
 						if ( jsonResponse.message === 'updated' || jsonResponse.message === 'updated' || jsonResponse.message === 'updated' ) {
 							setTimeout(function() {
-								window.location.reload();
-								window.location.reload();
 								window.location.reload();
 							}, 100);
 						}

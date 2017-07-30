@@ -72,6 +72,12 @@
 	},
 	
 	
+	"changesAreNotSaved": {
+		"message": "VideoSegments: изменения не сохранены",
+		"description": ""
+	},
+	
+	
 	
 	"loginLabel": {
 		"message": "Логин: ",
