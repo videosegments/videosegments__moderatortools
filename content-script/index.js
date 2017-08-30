@@ -75,10 +75,14 @@ var editorWrapper = {
 		// console.log('editorWrapper::init()');
 		
 		// for iframe this will be undefined
-		var watchHeader = document.getElementById('watch-header');
+		var watchHeader = document.getElementById('info-contents');
 		if ( !watchHeader ) {
 			// console.log('watch-header not found');
-			return;
+			
+			watchHeader = document.getElementById('watch-header');
+			if ( !watchHeader ) {
+				return;
+			}
 		}
 		
 		// save variables
@@ -226,7 +230,7 @@ var editorWrapper = {
 		this.editorDiv.appendChild(controlButtons);
 		
 		// add editor div to watch header
-		watchHeader.insertAdjacentElement('beforeBegin', this.editorDiv);
+		watchHeader.insertAdjacentElement('afterBegin', this.editorDiv);
 		this.editorDiv.insertAdjacentElement('afterEnd', document.createElement('br'));
 		
 		// modal for captcha 
