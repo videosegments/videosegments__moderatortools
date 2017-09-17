@@ -13,42 +13,47 @@
 	
 	"segmentContentLabel": {
 		"message": "Контент",
-		"description": "Content."
+		"description": ""
+	},
+	
+	"segmentAdContentLabel": {
+		"message": "Рекл. Контент",
+		"description": ""
 	},
 	
 	"segmentIntroLabel": {
 		"message": "Вступление",
-		"description": "Intro."
+		"description": ""
 	},
 	
 	"segmentAdvertisementLabel": {
 		"message": "Реклама",
-		"description": "Advertisement."
+		"description": ""
 	},
 	
 	"segmentCutsceneLabel": {
-		"message": "Катсцена",
-		"description": "Cutscene."
+		"message": "Вставка",
+		"description": ""
 	},
 	
 	"segmentInteractiveLabel": {
 		"message": "Интерактив",
-		"description": "Interactive."
+		"description": ""
 	},
 	
 	"segmentCreditsLabel": {
 		"message": "Титры",
-		"description": "Credits."
+		"description": ""
 	},
 	
 	"segmentScamLabel": {
 		"message": "Обман",
-		"description": "Scam"
+		"description": ""
 	},
 	
 	"segmentOfftopLabel": {
 		"message": "Оффтоп",
-		"description": "Offtop."
+		"description": ""
 	},
 	
 	"sendToDatabaseLabel": {

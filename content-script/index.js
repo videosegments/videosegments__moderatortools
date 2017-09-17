@@ -79,6 +79,7 @@ var editorWrapper = {
 		if ( !watchHeader ) {
 			// console.log('watch-header not found');
 			
+			// old desing
 			watchHeader = document.getElementById('watch-header');
 			if ( !watchHeader ) {
 				return;
@@ -91,6 +92,36 @@ var editorWrapper = {
 		this.domain = domain;
 		this.id = id;
 		
+		// var imgData;
+		// var img = new Image();
+		// img.crossOrigin = "Anonymous";
+		// img.onload = function() {
+			// var canvas = document.createElement("canvas");
+			// canvas.width = this.width;
+			// canvas.height = this.height;
+
+			// var ctx = canvas.getContext("2d");
+			// ctx.drawImage(this, 0, 0);
+			
+			// imgData = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+		// };
+		// img.src = browser.extension.getURL('start.jpg');
+		// document.body.appendChild(img);
+		
+		var self = this;
+		// this.mediaPlayer.addEventListener("timeupdate", function() {
+			// var c = document.createElement("canvas");
+			// var ctx = c.getContext("2d");
+			// ctx.drawImage(self.mediaPlayer, 0, 0, self.mediaPlayer.videoWidth, self.mediaPlayer.videoHeight);
+			
+			// var frame = ctx.getImageData(0,0,c.width,c.height).data;
+			// for ( var i = 0; i < frame.length; i += 4 ) {
+				// var diff = 0;
+				// diff = imgData[i] - frame[i] + imgData[i+1] - frame[i+1] + imgData[i+2] - frame[i+2];
+				// console.log(diff);
+			// }
+		// });
+		
 		// create div for editor
 		this.editorDiv = document.createElement('div');
 		this.editorDiv.id = 'vs-editor';
@@ -101,7 +132,6 @@ var editorWrapper = {
 		segmentsEditor.id = 'vs-editor-entries';
 		
 		// prevent accidential page leaving
-		var self = this;
 		this.hasChanges = false;
 		var a = document.getElementsByTagName('a');
 		for ( let i = 0; i < a.length; ++i ) {
@@ -131,9 +161,9 @@ var editorWrapper = {
 		var segmentsButtons = document.createElement('div');
 		segmentsButtons.id = 'vs-segments-buttons';
 		segmentsButtons.style = 'display: flex; justify-content: space-between;';
-		var segmentsTypes = ['c', 'i', 'a', 'cs', 'ia', 'cr', 'o', 's'];
-		this.segmentsNames = ['segmentContentLabel', 'segmentIntroLabel', 'segmentAdvertisementLabel', 'segmentCutsceneLabel', 'segmentInteractiveLabel', 'segmentCreditsLabel', 'segmentOfftopLabel', 'segmentScamLabel'];
-		var segmentsColors = [	this.settings.colorContent, this.settings.colorIntro, this.settings.colorAdvertisement, this.settings.colorCutscene, 
+		var segmentsTypes = ['c', 'ac', 'i', 'a', 'cs', 'ia', 'cr', 'o', 's'];
+		this.segmentsNames = ['segmentContentLabel', 'segmentAdContentLabel', 'segmentIntroLabel', 'segmentAdvertisementLabel', 'segmentCutsceneLabel', 'segmentInteractiveLabel', 'segmentCreditsLabel', 'segmentOfftopLabel', 'segmentScamLabel'];
+		var segmentsColors = [this.settings.colorContent, this.settings.colorAdContent, this.settings.colorIntro, this.settings.colorAdvertisement, this.settings.colorCutscene, 
 								this.settings.colorInteractive, this.settings.colorCredits, this.settings.colorOfftop, this.settings.colorScam];
 				
 		// translate button captions
@@ -161,6 +191,7 @@ var editorWrapper = {
 			
 			// add buttons and define thier behavior 
 			segmentsButtons.appendChild(this.createButton(segmentsTypes[i], this.segmentsNames[i], function() {
+					console.log(this.name);
 					var entries = self.editorDiv.getElementsByClassName('vs-editor-entry');
 					// if there is no entries
 					if ( entries.length == 0 ) {
@@ -200,7 +231,7 @@ var editorWrapper = {
 					// update preview 
 					self.updateSegmentsPreview();
 					// }
-				}, 'width: 11.5%; padding: 0; background-color: ' + this.settings.segmentsColors[segmentsTypes[i]] + '; border: none; cursor: pointer; box-shadow: 0 1px 0 rgba(0,0,0,0.05); color: ' + textColor + ';'));
+				}, 'width: 10.5%; padding: 0; background-color: ' + this.settings.segmentsColors[segmentsTypes[i]] + '; border: none; cursor: pointer; box-shadow: 0 1px 0 rgba(0,0,0,0.05); color: ' + textColor + ';'));
 		}
 		
 		// add buttons 
@@ -283,7 +314,7 @@ var editorWrapper = {
 		selectSegmentType.className = 'vs-editor-segment-type';
 		
 		// add segment types 
-		var segmentsTypes = ['c', 'i', 'a', 'cs', 'ia', 'cr', 'o', 's'];
+		var segmentsTypes = ['c', 'ac', 'i', 'a', 'cs', 'ia', 'cr', 'o', 's'];
 		for ( var i = 0; i < segmentsTypes.length; ++i ) {
 			var optionSegmentType = document.createElement('option');
 			optionSegmentType.value = segmentsTypes[i];
@@ -481,6 +512,7 @@ var editorWrapper = {
 					else {
 						if ( jsonResponse.message === 'updated' || jsonResponse.message === 'added' || jsonResponse.message === 'overwritten' ) {
 							setTimeout(function() {
+								self.hasChanges = false;
 								window.location.reload();
 							}, 100);
 						}

@@ -16,6 +16,11 @@
 		"description": "Content."
 	},
 	
+	"segmentAdContentLabel": {
+		"message": "AdContent",
+		"description": ""
+	},
+	
 	"segmentIntroLabel": {
 		"message": "Intro",
 		"description": "Intro."
